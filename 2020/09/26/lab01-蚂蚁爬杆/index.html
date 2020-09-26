@@ -7,19 +7,19 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
-<title>lab01-蚂蚁爬杆 - 江湖行走</title>
+<title>lab01-蚂蚁爬杆 - ��������</title>
 
 
     <meta name="description" content="0. 题目详情有一根300 厘米的细木杆，在第30 厘米、80 厘米、110 厘米、160 厘米、250厘米这五个位置上各有一只蚂蚁。木杆很细，不能同时通过两只蚂蚁。 开始时，蚂蚁的头朝左还是朝右是任意的，它们只会朝前走或调头，但不会后退。当任意两只蚂蚁碰头时，两只蚂蚁会同时调头朝相反方向走。假设蚂蚁们每秒钟可以走5 厘米的距离。 注：不允许穿越对方身体继续直行 请编写一个程序，计算各种可能情形下">
 <meta property="og:type" content="article">
 <meta property="og:title" content="lab01-蚂蚁爬杆">
 <meta property="og:url" content="https://github.com/SpacemanZoey/2020/09/26/lab01-%E8%9A%82%E8%9A%81%E7%88%AC%E6%9D%86/index.html">
-<meta property="og:site_name" content="江湖行走">
+<meta property="og:site_name" content="��������">
 <meta property="og:description" content="0. 题目详情有一根300 厘米的细木杆，在第30 厘米、80 厘米、110 厘米、160 厘米、250厘米这五个位置上各有一只蚂蚁。木杆很细，不能同时通过两只蚂蚁。 开始时，蚂蚁的头朝左还是朝右是任意的，它们只会朝前走或调头，但不会后退。当任意两只蚂蚁碰头时，两只蚂蚁会同时调头朝相反方向走。假设蚂蚁们每秒钟可以走5 厘米的距离。 注：不允许穿越对方身体继续直行 请编写一个程序，计算各种可能情形下">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://github.com/images/og_image.png">
 <meta property="article:published_time" content="2020-09-26T02:20:27.000Z">
-<meta property="article:modified_time" content="2020-09-26T02:40:47.595Z">
+<meta property="article:modified_time" content="2020-09-26T02:49:46.539Z">
 <meta property="article:author" content="fldjs">
 <meta property="article:tag" content="代码能力">
 <meta name="twitter:card" content="summary">
@@ -151,7 +151,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    12 分钟 读完 (大约 1810 个字)
+                    12 分钟 读完 (大约 1811 个字)
                 </span>
                 
                 
@@ -168,6 +168,8 @@
 <p>开始时，蚂蚁的头朝左还是朝右是任意的，它们只会朝前走或调头，但不会后退。当任意两只蚂蚁碰头时，两只蚂蚁会同时调头朝相反方向走。假设蚂蚁们每秒钟可以走5 厘米的距离。</p>
 <p>注：不允许穿越对方身体继续直行</p>
 <p>请编写一个程序，计算各种可能情形下所有蚂蚁都离开木杆的<strong>最小时间和最大时间</strong>。</p>
+<a id="more"></a>
+
 <h3 id="1-思路概要"><a href="#1-思路概要" class="headerlink" title="1. 思路概要"></a>1. 思路概要</h3><p> 在蚂蚁类中设置position这一属性，通过一个函数f(x)对position进行加减来实现蚂蚁的运动，当蚂蚁的position满足下式：<br>$$<br>position \leq 0 \quad||\quad position \geq 300<br>$$<br>说明蚂蚁已经离开木杆，此时我们将蚂蚁类中isDown的属性设置为true，并将WoodenPole类中表示离开蚂蚁数量的属性numOfDown++，当numOfDown == antNum所有的蚂蚁已经全部离开木棒，游戏结束。</p>
 <p> 此外，我们考虑到需要枚举所有蚂蚁的初始面朝方向的情况，所以我们将蚂蚁的面向direction设置boolean型，面朝右则为true，反之则为false，通过二进制的移位来设置每一只蚂蚁的面向情况，使用一个二维数组来记录这些值。</p>
 <p> 而后，我们需要考虑计算蚂蚁离开木棒所用时间，我们使用了在CreepingGame类中设置了thisTime来记录蚂蚁所用的时间，最后取最大最小值输出。</p>
