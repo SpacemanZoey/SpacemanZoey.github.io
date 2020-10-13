@@ -19,7 +19,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://github.com/images/og_image.png">
 <meta property="article:published_time" content="2020-09-26T02:20:27.000Z">
-<meta property="article:modified_time" content="2020-09-26T03:10:32.103Z">
+<meta property="article:modified_time" content="2020-09-26T03:12:01.023Z">
 <meta property="article:author" content="fldjs">
 <meta property="article:tag" content="代码能力">
 <meta name="twitter:card" content="summary">
@@ -151,7 +151,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    12 分钟 读完 (大约 1801 个字)
+                    12 分钟 读完 (大约 1817 个字)
                 </span>
                 
                 
@@ -198,10 +198,14 @@
 <h5 id="（6）判断游戏结束；"><a href="#（6）判断游戏结束；" class="headerlink" title="（6）判断游戏结束；"></a>（6）判断游戏结束；</h5><p>我们在WoodenPole类型中设计了一个int类型的numOfDown属性，这一属性代表了已经下杆的蚂蚁，当numOfDown == antNum时，所有蚂蚁均已下杆。</p>
 <h5 id="（7）计算游戏进行时间；"><a href="#（7）计算游戏进行时间；" class="headerlink" title="（7）计算游戏进行时间；"></a>（7）计算游戏进行时间；</h5><p>详细一点的方案是在开始和结束的时候返回系统时间然后减一减，但是老师讲这个是简化版的，那么就自己定义一个计时器int time = 0 每次全部蚂蚁走完一次之后（即每个蚂蚁都完成一次position + = velocity * thisTime）后thisTime++ 算是完成一个时钟</p>
 <h5 id="（8）计算蚂蚁面向的所有可能；"><a href="#（8）计算蚂蚁面向的所有可能；" class="headerlink" title="（8）计算蚂蚁面向的所有可能；"></a>（8）计算蚂蚁面向的所有可能；</h5><p>利用二进制数的特性做逻辑操作，假设有4只蚂蚁，那么0000 0001 0010 ~1111 总共16个数字（1-16）就代表全16种面向的可能</p>
-<h3 id="3-UML图"><a href="#3-UML图" class="headerlink" title="3. UML图"></a>3. UML图</h3><h4 id="a-用例图"><a href="#a-用例图" class="headerlink" title="a. 用例图"></a>a. 用例图</h4><img src="/2020/09/26/lab01-%E8%9A%82%E8%9A%81%E7%88%AC%E6%9D%86/clip_image002.png" class="" title="UseCase img">
+<h3 id="3-UML图"><a href="#3-UML图" class="headerlink" title="3. UML图"></a>3. UML图</h3><h4 id="a-用例图"><a href="#a-用例图" class="headerlink" title="a. 用例图"></a>a. 用例图</h4><img src="/2020/09/26/lab01-%E8%9A%82%E8%9A%81%E7%88%AC%E6%9D%86/clip_image002.png" class="" title="用例图">
 
-<h4 id="b-类图"><a href="#b-类图" class="headerlink" title="b. 类图"></a>b. 类图</h4><p><img src="lab01-%E8%9A%82%E8%9A%81%E7%88%AC%E6%9D%86/clip_image003.png" alt="clip_image003"></p>
-<h4 id="c-顺序图"><a href="#c-顺序图" class="headerlink" title="c. 顺序图"></a>c. 顺序图</h4><p><img src="lab01-%E8%9A%82%E8%9A%81%E7%88%AC%E6%9D%86/clip_image001.png" alt="clip_image001"></p>
+<h4 id="b-类图"><a href="#b-类图" class="headerlink" title="b. 类图"></a>b. 类图</h4><img src="/2020/09/26/lab01-%E8%9A%82%E8%9A%81%E7%88%AC%E6%9D%86/clip_image003.png" class="" title="类图">
+
+<p><img src="lab01-%E8%9A%82%E8%9A%81%E7%88%AC%E6%9D%86/clip_image003.png" alt="clip_image003"></p>
+<h4 id="c-顺序图"><a href="#c-顺序图" class="headerlink" title="c. 顺序图"></a>c. 顺序图</h4><img src="/2020/09/26/lab01-%E8%9A%82%E8%9A%81%E7%88%AC%E6%9D%86/clip_image001.png" class="" title="顺序图">
+
+<p><img src="lab01-%E8%9A%82%E8%9A%81%E7%88%AC%E6%9D%86/clip_image001.png" alt="clip_image001"></p>
 <h3 id="4-代码"><a href="#4-代码" class="headerlink" title="4. 代码"></a>4. 代码</h3><h5 id="Ant类"><a href="#Ant类" class="headerlink" title="Ant类"></a>Ant类</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> labOne;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Ant</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> velocity;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> direction = <span class="keyword">false</span>;<span class="comment">//true: 向右，false：向左</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> position;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> isDown = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Ant</span><span class="params">(<span class="keyword">int</span> position, <span class="keyword">int</span> velocity, <span class="keyword">boolean</span> direction)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.position = position;</span><br><span class="line">        <span class="keyword">this</span>.velocity = velocity;</span><br><span class="line">        <span class="keyword">this</span>.direction = direction;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OneStep</span><span class="params">(<span class="keyword">int</span> i)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!isDown)&#123;</span><br><span class="line">            <span class="keyword">if</span> (direction == <span class="keyword">true</span>)</span><br><span class="line">                position += velocity * i;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                position -= velocity * i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">changDirection</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.direction = !<span class="keyword">this</span>.direction;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setDirection</span><span class="params">(<span class="keyword">boolean</span> direction)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.direction = direction;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">getDirection</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> direction;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPos</span><span class="params">(<span class="keyword">int</span> position)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.position = position;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getPos</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> position;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//修改蚂蚁出杆状态</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setDown</span><span class="params">(<span class="keyword">boolean</span> isDown)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.isDown = isDown;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">getDown</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> isDown;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h4 id="CreepingGame"><a href="#CreepingGame" class="headerlink" title="CreepingGame"></a>CreepingGame</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> labOne;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CreepingGame</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> theEnd = <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> thisTime = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">AntRun</span><span class="params">(Ant[] ants, WoodenPole woodenPole)</span></span>&#123;</span><br><span class="line">        woodenPole.setNumOfDown(<span class="number">0</span>);</span><br><span class="line">        thisTime = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> antNum = woodenPole.getAntNum();</span><br><span class="line">        <span class="keyword">while</span> (!woodenPole.isAllOut())&#123;</span><br><span class="line">            thisTime++;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; antNum; i++)&#123;</span><br><span class="line">                ants[i].OneStep(<span class="number">1</span>);</span><br><span class="line">                <span class="keyword">if</span> (!ants[i].getDown())</span><br><span class="line">                    woodenPole.isOut(ants[i]);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; antNum - <span class="number">1</span>; i++)&#123;</span><br><span class="line">                <span class="keyword">if</span> ( (!ants[i].getDirection() == ants[i + <span class="number">1</span>].getDirection()) &amp;&amp; (!ants[i].getDown() &amp;&amp; !ants[i + <span class="number">1</span>].getDown()))&#123;</span><br><span class="line">                    <span class="comment">//两只蚂蚁相遇了</span></span><br><span class="line">                    <span class="keyword">if</span> (ants[i].getPos() &gt;= ants[i + <span class="number">1</span>].getPos())&#123;</span><br><span class="line">                        <span class="comment">//如果超过了</span></span><br><span class="line">                        <span class="keyword">if</span> (ants[i].getPos() &gt; ants[i + <span class="number">1</span>].getPos())&#123;</span><br><span class="line">                            ants[i].OneStep(-<span class="number">1</span>);</span><br><span class="line">                            ants[i + <span class="number">1</span>].OneStep(-<span class="number">1</span>);</span><br><span class="line">                        &#125;</span><br><span class="line">                        ants[i].changDirection();</span><br><span class="line">                        ants[i + <span class="number">1</span>].changDirection();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(<span class="string">"走了"</span>+thisTime+<span class="string">"秒后："</span>);</span><br><span class="line">            PlayRoom.print(ants);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> thisTime;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -237,6 +241,13 @@
 
 <div class="card card-transparent">
     <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2020/10/13/LSM%E6%A0%91%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">LSM树数据结构</span>
+            </a>
+        </div>
         
         
         <div class="level-end">
@@ -316,7 +327,7 @@
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            5
+                            6
                         </p>
                     </a>
                 </div>
@@ -431,6 +442,25 @@
         
         <article class="media">
             
+            <a href="/2020/10/13/LSM%E6%A0%91%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="LSM树数据结构">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-10-13T15:25:17.000Z">2020-10-13</time></div>
+                    <a href="/2020/10/13/LSM%E6%A0%91%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" class="title has-link-black-ter is-size-6 has-text-weight-normal">LSM树数据结构</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2020/09/26/lab01-%E8%9A%82%E8%9A%81%E7%88%AC%E6%9D%86/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/images/thumbnail.svg" alt="lab01-蚂蚁爬杆">
@@ -505,25 +535,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2019/06/28/Hello-World/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/thumbnail.svg" alt="Hello World!">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-06-27T17:30:12.000Z">2019-06-28</time></div>
-                    <a href="/2019/06/28/Hello-World/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Hello World!</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/hello-world/">hello world</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -534,6 +545,17 @@
             归档
         </h3>
         <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
         
         <li>
             <a class="level is-marginless" href="/archives/2020/09/">
