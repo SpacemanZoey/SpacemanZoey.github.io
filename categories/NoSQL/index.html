@@ -156,7 +156,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    17 分钟 读完 (大约 2539 个字)
+                    17 分钟 读完 (大约 2540 个字)
                 </span>
                 
                 
@@ -171,74 +171,16 @@
         <div class="content">
             <p>​        <strong>LSM(Log-Structed-Merged-Tree)日志结构合并树</strong>，事实上，它并非是一棵严格的树状数据结构，而是一种<strong>存储结构</strong>。现在的绝大多数<strong>NoSQL</strong>数据库核心思想都是基于LSM树数据结构的，比如HBase、LevelDB、RocksDB等等。</p>
 <p>​        LSM树的<strong>核心特点</strong>是<strong>利用顺序写来提高写性能</strong>，但因为分层(此处分层是指的分为内存和文件两部分)的设计会稍微降低读性能，但是通过牺牲小部分读性能换来高性能写，使得LSM树成为非常流行的存储结构。</p>
-<h2 id="1-LSM树诞生背景"><a href="#1-LSM树诞生背景" class="headerlink" title="1. LSM树诞生背景"></a>1. LSM树诞生背景</h2><p>​        传统的关系型数据库中使用B-tree或者它的一些变体作为存储结构，但是B-tree存在一个缺点，就是在逻辑上很近的数据，在物理上的存储可能会相隔非常远，这导致了大量的磁盘的<strong>随机读写</strong>，而随机读写的效率远远低于顺序读写，从下图就可以知道：</p>
-<p><img src="LSM%E6%A0%91%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.assets/read&write.png" alt="read&amp;write"></p>
-<p>我们可以看到顺序读写比随机读写快了至少三个数量级。</p>
-<p>​        所以为了提升IO的性能，需要尽量地增加<strong>顺序读写</strong>的数量，LSM树数据结构让我们能够<strong>顺序写磁盘</strong>，从而大幅提升写操作，但作为代价是牺牲了读性能。</p>
-<h2 id="2-LSM树的原理"><a href="#2-LSM树的原理" class="headerlink" title="2. LSM树的原理"></a>2. LSM树的原理</h2><p>LSM树由两个或者以上的存储结构构成，为了方便起见，我们就用最简单的两个存储结构来解释说明，一个是内存中的Index，另一个是硬盘中已经有序的文件：</p>
-<p><img src="LSM%E6%A0%91%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.assets/structure.png" alt="structure"></p>
-<p>LSM会有一个存储结构<strong>常驻在内存缓存（memtable）</strong>中，我们可以把它称作C0-tree，可以是树状结构，可以是任何方便键值查找的数据结构，如红黑树、map等；另一个存储结构<strong>常驻在硬盘（sstable）</strong>中，称之为C1-tree，具体的结构类似B-tree，需要值得注意的是<strong>C1的所有节点都是100%满的</strong>，节点的大小为磁盘块大小。</p>
-<p>LSM由以下三个重要部分组成</p>
-<h3 id="MemTable"><a href="#MemTable" class="headerlink" title="MemTable"></a>MemTable</h3><p>​        是在内存中的数据结构，用于保存最近的一些更新操作，在写到memtable中前，会先通过WAL(Write-ahead logging，预写式日志)的方式备份到磁盘中。</p>
-<p>​        memtable存储数据的方式，可以是任何方便键值查找的数据结构，甚至可以用跳表来进行储存。</p>
-<h3 id="Immutable-MemTable"><a href="#Immutable-MemTable" class="headerlink" title="Immutable MemTable"></a>Immutable MemTable</h3><p>​        当MemTable达到一定大小之后，会转化成Immutable MemTable，这是MemTable变为SSTable的一中中间状态。</p>
-<h3 id="SSTable"><a href="#SSTable" class="headerlink" title="SSTable"></a>SSTable</h3><p>​        <strong>有序键值对</strong>集合，是LSM树组在<strong>磁盘</strong>中的数据结构。当SSTable比较大的时候，我们可以建立索引来加快读取，下图为一个简单的SSTable结构示意：</p>
-<p><img src="LSM%E6%A0%91%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.assets/16b47414ad483b3a.png" alt="16b47414ad483b3a"></p>
-<p>​        所有的MemTable中的数据都会被转化为SSTable并保存在磁盘中，而当SSTable过大了之后，也会对其进行合并操作。</p>
-<h2 id="3-写操作"><a href="#3-写操作" class="headerlink" title="3. 写操作"></a>3. 写操作</h2><h3 id="插入步骤"><a href="#插入步骤" class="headerlink" title="插入步骤"></a>插入步骤</h3><ol>
-<li>通过WAL将数据写入到磁盘Log中，防止数据丢失</li>
-<li>将新记录的索引插入到C0，即MemTable中</li>
-<li>当C0（MemTable）大小达到某一阈值或每隔一段时间，将C0中记录滚动合并到磁盘C1（SSTable）中</li>
-<li>对于多个存储结构的情况，当C1体量越来越来大就会向C2合并，以此类推一直往上合并Ck</li>
-</ol>
-<p><img src="LSM%E6%A0%91%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.assets/merged.png" alt="merged"></p>
-<h2 id="4-读操作"><a href="#4-读操作" class="headerlink" title="4. 读操作"></a>4. 读操作</h2><h3 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h3><ol>
-<li>系统首先检查内存数据(memtable)</li>
-<li>如果没有找到这个key，就会逆序的一个一个检查sstable文件，直到key 被找到，时间复杂度为O(logN)，但是读操作会变的越来越慢随着sstable的个数增加，因为每一个 sstable都要被检查。（O(K log N), K为sstable个数， N 为sstable平均大小）。</li>
-</ol>
-<h3 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h3><ol>
-<li><p>页缓存（TableCache）</p>
-<p> ​        将sstable按照LRU缓存在内存中，减少二分之一的查找消耗。</p>
-</li>
-<li><p>文件索引</p>
-<p> ​        把文件切分成一个个page，然后再文件头部或者尾部维护一组元信息，标明每个page的offset和涵盖的Key范围。这样，我们在查找的时候，可以查看这组元信息，然后直接跳到对应的page进行查找。</p>
-<p> ​        还可以把这些page索引保存在内存中，这样不需要读取文件里的元信息就可以直接跳到对应的page。</p>
-</li>
-<li><p>周期合并操作</p>
-<p> 通过周期的合并文件，来保持文件的个数，具体的合并操作在下面会讲到。</p>
-</li>
-<li><p>布隆过滤器</p>
-<p> Bloom filter可以告诉我们一个Key是否存在。它的原理很简单：</p>
-<p> <strong>插入</strong>：首先我们维护着一个长度为L的bit vector#1，每加入一个key，我们把这个key哈希成长度同样为L的bit vector#2，<strong><em>或\</em></strong>上原来的bit vector#1。</p>
-<p> <strong>查找</strong>：当我们要查看一个key是否存在的时候，我们同样把它哈希成长度为L的bit vector#2，<strong><em>与\</em></strong>上bloom filter的bit vector#1，如果结果和bit vector#2相等，那就返回true，否则返回false。</p>
-<p> 虽然有一定几率就算key不存在，我们也会得到true，但是当我们得到false的时候，key就一定不存在。</p>
-</li>
-</ol>
-<h2 id="5-合并操作"><a href="#5-合并操作" class="headerlink" title="5. 合并操作"></a>5. 合并操作</h2><p>​        在介绍了读操作的优化之后，我们发现，合并操作对于LSM树数据结构是非常关键的，否则SSTable的数量将会不断膨胀，目前有两个比较广泛被使用的合并操作：size-tiered策略和leveled策略。</p>
-<h3 id="size-tiered策略"><a href="#size-tiered策略" class="headerlink" title="size-tiered策略"></a>size-tiered策略</h3><p>​        <img src="LSM%E6%A0%91%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.assets/%E4%B8%8B%E8%BD%BD.jpg" alt="下载"></p>
-<p>​        size-tiered策略是被HBase采用的合并策略，当某个规模的集合达到一定的数量时，将这些集合合并为一个大的集合。比如有5个50个数据的集合，那么就将他们合并为一个250个数据的集合。</p>
-<p>​        当层数到达一定数量的时候，最底层的单个SSTable的大小会变得非常大，合并操作会变得十分的耗时。</p>
-<h3 id="Leveled策略"><a href="#Leveled策略" class="headerlink" title="Leveled策略"></a>Leveled策略</h3><p>​        leveled策略是LevelDB和RocksDB采用的合并策略，下图是LevelDB存储的过程。</p>
-<p><img src="LSM%E6%A0%91%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.assets/leveldb-architecture.png" alt="leveldb-architecture"></p>
-<p>​        leveled策略将每一层切分成多个大小相近的SSTable，而且将集合划分为不同的层级。每一个层级的集合总大小是固定且递增的。这些SSTable是这一层是<strong>全局有序</strong>的，意味着一个key在每一层至多只有1条记录，不存在冗余记录。</p>
-<p>​        leveled策略合并的过程是：当某一层的数据集合大小达到上限时，就会从这一层中选出一个文件和下一层合并，或者直接提升到下一层。如果在合并过程中发现了数据冲突，则丢弃下一层的数据，因为低层的数据总是更新的。</p>
-<p>​        同时leveled策略会限制，除第一层外。其他的每一层的键值都不会重复。这是通过合并时剔除冗余数据实现的，以此来加速在同一层内数据的线性扫描速度。</p>
-<p>​        leveled策略相较于size-tiered策略来说，每层内key是不会重复的，即使是最坏的情况，除开最底层外，其余层都是重复key，按照相邻层大小比例为10来算，冗余占比也很小。因此空间放大问题得到缓解。但是写放大问题会更加突出。举一个最坏场景，如果LevelN层某个SSTable的key的范围跨度非常大，覆盖了LevelN+1层所有key的范围，那么进行Compact时将涉及LevelN+1层的全部数据。</p>
-<h2 id="6-删除操作"><a href="#6-删除操作" class="headerlink" title="6. 删除操作"></a>6. 删除操作</h2><p>​        当有删除操作时，并不需要像B+树一样，在磁盘中的找到相应的数据后再删除，只需要在memtable中插入一条数据当作标志，如<code>delKey:1933</code>，当读操作读到memtable中的这个标志时，就会知道这个key已被删除。随后在日志合并中，这条被删除的数据会在合并的过程中一起被删除。</p>
-<h2 id="7-更新操作"><a href="#7-更新操作" class="headerlink" title="7. 更新操作"></a>7. 更新操作</h2><p>​        更新操作和000删除操作类似，都是只操作memtable，写入一个标志，随后真正的更新操作被延迟在合并时一并完成。</p>
-<h2 id="8-结论"><a href="#8-结论" class="headerlink" title="8. 结论"></a>8. 结论</h2><p>​        LSM树数据结构，使用了顺序读写的方式，牺牲了小部分的读性能，而大大提升了写性能，相比于B-tree，它更适用于索引插入比检索更频繁的应用系统；LSM不同的文件合并方式，对其性能的影响很大。</p>
-<h2 id="9-参考文献"><a href="#9-参考文献" class="headerlink" title="9. 参考文献"></a>9. 参考文献</h2><p>[1] <a href="http://www.linwu.me/LSM-Tree/">http://www.linwu.me/LSM-Tree/</a></p>
-<p>[2]<a href="https://www.zhihu.com/question/19887265">https://www.zhihu.com/question/19887265</a></p>
-<p>[3] <a href="https://juejin.im/post/6844903688075477000">https://juejin.im/post/6844903688075477000</a></p>
-<p>[4]<a href="https://zhuanlan.zhihu.com/p/181498475">https://zhuanlan.zhihu.com/p/181498475</a></p>
-<p>[5]<a href="https://berryjam.github.io/2019/01/Log-Structured-Merge-Trees/">https://berryjam.github.io/2019/01/Log-Structured-Merge-Trees/</a></p>
-<p>[6]<a href="https://www.igvita.com/2012/02/06/sstable-and-log-structured-storage-leveldb/">https://www.igvita.com/2012/02/06/sstable-and-log-structured-storage-leveldb/</a>.</p>
-<p>[7]<a href="https://juejin.im/post/6844903863758094343">https://juejin.im/post/6844903863758094343</a></p>
-<p>[8]<a href="https://www.scylladb.com/2018/01/17/compaction-series-space-amplification/">https://www.scylladb.com/2018/01/17/compaction-series-space-amplification/</a></p>
-<p>[9]<a href="https://wiesen.github.io/post/leveldb-storage-memtable/">https://wiesen.github.io/post/leveldb-storage-memtable/</a></p>
-
         </div>
         
+        
+        <div class="level is-mobile">
+            <div class="level-start">
+                <div class="level-item">
+                <a class="button is-size-7 is-light" href="/2020/10/13/LSM%E6%A0%91%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/#more">阅读更多</a>
+                </div>
+            </div>
+        </div>
         
         
     </div>
@@ -296,7 +238,7 @@
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            7
+                            6
                         </p>
                     </a>
                 </div>
@@ -419,25 +361,6 @@
         
         <article class="media">
             
-            <a href="/2020/10/13/LSM%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/thumbnail.svg" alt="LSM数据结构">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-10-13T15:39:19.000Z">2020-10-13</time></div>
-                    <a href="/2020/10/13/LSM%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" class="title has-link-black-ter is-size-6 has-text-weight-normal">LSM数据结构</a>
-                    <p class="is-size-7 is-uppercase">
-                        
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
             <a href="/2020/10/13/LSM%E6%A0%91%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/images/thumbnail.svg" alt="LSM树数据结构">
@@ -512,6 +435,25 @@
             </div>
         </article>
         
+        <article class="media">
+            
+            <a href="/2020/01/30/Unity3D%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%85%A5%E5%9C%9FDay1/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="Unity3D游戏开发从入门到入土Day1">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-01-30T04:57:23.000Z">2020-01-30</time></div>
+                    <a href="/2020/01/30/Unity3D%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%85%A5%E5%9C%9FDay1/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Unity3D游戏开发从入门到入土Day1</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/%E5%AD%A6%E4%B9%A0/">学习</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
     </div>
 </div>
     
@@ -529,7 +471,7 @@
                     <span class="level-item">十月 2020</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">2</span>
+                    <span class="level-item tag">1</span>
                 </span>
             </a>
         </li>
