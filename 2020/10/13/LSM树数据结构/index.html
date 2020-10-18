@@ -19,7 +19,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://github.com/images/og_image.png">
 <meta property="article:published_time" content="2020-10-13T15:25:17.000Z">
-<meta property="article:modified_time" content="2020-10-18T08:37:13.360Z">
+<meta property="article:modified_time" content="2020-10-18T08:45:03.599Z">
 <meta property="article:author" content="fldjs">
 <meta property="article:tag" content="数据库">
 <meta name="twitter:card" content="summary">
@@ -151,7 +151,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    17 分钟 读完 (大约 2529 个字)
+                    17 分钟 读完 (大约 2527 个字)
                 </span>
                 
                 
@@ -169,7 +169,7 @@
 <a id="more"></a>
 
 <h2 id="1-LSM树诞生背景"><a href="#1-LSM树诞生背景" class="headerlink" title="1. LSM树诞生背景"></a>1. LSM树诞生背景</h2><p>​        传统的关系型数据库中使用B-tree或者它的一些变体作为存储结构，但是B-tree存在一个缺点，就是在逻辑上很近的数据，在物理上的存储可能会相隔非常远，这导致了大量的磁盘的<strong>随机读写</strong>，而随机读写的效率远远低于顺序读写，从下图就可以知道：</p>
-<p><img src="https://i.imgur.com/read&write.png" alt=""></p>
+<p><img src="read&write.png" alt="read&amp;write"></p>
 <p>我们可以看到顺序读写比随机读写快了至少三个数量级。</p>
 <p>​        所以为了提升IO的性能，需要尽量地增加<strong>顺序读写</strong>的数量，LSM树数据结构让我们能够<strong>顺序写磁盘</strong>，从而大幅提升写操作，但作为代价是牺牲了读性能。</p>
 <h2 id="2-LSM树的原理"><a href="#2-LSM树的原理" class="headerlink" title="2. LSM树的原理"></a>2. LSM树的原理</h2><p>LSM树由两个或者以上的存储结构构成，为了方便起见，我们就用最简单的两个存储结构来解释说明，一个是内存中的Index，另一个是硬盘中已经有序的文件：</p>
