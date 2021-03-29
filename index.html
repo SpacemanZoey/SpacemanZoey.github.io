@@ -145,7 +145,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    2 分钟 读完 (大约 227 个字)
+                    2 分钟 读完 (大约 228 个字)
                 </span>
                 
                 
@@ -158,14 +158,17 @@
             
         </h1>
         <div class="content">
-            <h2 id="方法一：纵向配对"><a href="#方法一：纵向配对" class="headerlink" title="方法一：纵向配对"></a>方法一：纵向配对</h2><p>没有什么特别的地方，从前往后对于所有字符串按顺序遍历，相同位置的字符是否相同，若相同则继续比较，若不同直接退出，当前所得的ans串即为最长公共前缀。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">longestCommonPrefix</span><span class="params">(String[] strs)</span> </span>&#123;</span><br><span class="line">        String ans = <span class="string">""</span>;</span><br><span class="line">        <span class="keyword">int</span> min = Integer.MAX_VALUE;</span><br><span class="line">        <span class="keyword">int</span> len = strs.length;</span><br><span class="line">        <span class="keyword">if</span> (strs.length == <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> ans;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; strs.length; i++)&#123;</span><br><span class="line">            min = Math.min(min, strs[i].length());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; min; i++)&#123;</span><br><span class="line">            String tmp = strs[<span class="number">0</span>].substring(i, i + <span class="number">1</span>);</span><br><span class="line">            <span class="keyword">boolean</span> flag = <span class="keyword">false</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt; strs.length; j++)&#123;</span><br><span class="line">                <span class="keyword">if</span> (! tmp.equals(strs[j].substring(i, i + <span class="number">1</span>)))&#123;</span><br><span class="line">                    flag = <span class="keyword">true</span>;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (flag)</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                ans += tmp;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>时间复杂度：</strong> $O(mn)$，其中m为字符串数组中最小字符串的长度，n为字符串的数量，最坏的情况下，字符串数组中每一个字符都会被比较。</p>
-<p><strong>空间复杂度：</strong>$O(1)$</p>
-
+            <h2 id="方法一：纵向配对"><a href="#方法一：纵向配对" class="headerlink" title="方法一：纵向配对"></a>方法一：纵向配对</h2>
         </div>
         
+        
+        <div class="level is-mobile">
+            <div class="level-start">
+                <div class="level-item">
+                <a class="button is-size-7 is-light" href="/2021/03/29/leetcode-%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%89%8D%E7%BC%80/#more">阅读更多</a>
+                </div>
+            </div>
+        </div>
         
         
     </div>
