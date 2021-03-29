@@ -145,6 +145,54 @@
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2021-03-29T12:27:41.000Z">2021-03-29</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/LeetCode/">LeetCode</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    2 分钟 读完 (大约 300 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2021/03/29/leetcode-%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BD%AC%E6%8D%A2%E6%95%B4%E6%95%B0/">leetcode 字符串转换整数</a>
+            
+        </h1>
+        <div class="content">
+            <h1 id="leetcode-字符串转换整数"><a href="#leetcode-字符串转换整数" class="headerlink" title="leetcode 字符串转换整数"></a>leetcode 字符串转换整数</h1><h1 id="方法一：ifelse"><a href="#方法一：ifelse" class="headerlink" title="方法一：ifelse"></a>方法一：ifelse</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">myAtoi</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">        s = s.trim();</span><br><span class="line">        <span class="keyword">if</span> (s.length() == <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span> (!Character.isDigit(s.charAt(<span class="number">0</span>)) &amp;&amp; s.charAt(<span class="number">0</span>) != <span class="string">'-'</span> &amp;&amp; s.charAt(<span class="number">0</span>) != <span class="string">'+'</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        Long ans = <span class="number">0L</span>;</span><br><span class="line">        <span class="keyword">boolean</span> isNeg = s.charAt(<span class="number">0</span>) == <span class="string">'-'</span>;</span><br><span class="line">        <span class="keyword">int</span> len = s.length();</span><br><span class="line">        <span class="keyword">int</span> i = Character.isDigit(s.charAt(<span class="number">0</span>)) ? <span class="number">0</span> : <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (i &lt; len &amp;&amp; Character.isDigit(s.charAt(i)))&#123;</span><br><span class="line">            ans = ans * <span class="number">10</span> + (s.charAt(i++) - <span class="string">'0'</span>);</span><br><span class="line">            <span class="keyword">if</span> (ans &gt;= Integer.MAX_VALUE + <span class="number">1L</span> &amp;&amp; isNeg == <span class="keyword">true</span>)&#123;</span><br><span class="line">                ans = Integer.MAX_VALUE + <span class="number">1L</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (ans &gt;= Integer.MAX_VALUE &amp;&amp; isNeg == <span class="keyword">false</span>) &#123;</span><br><span class="line">                ans = Integer.MAX_VALUE + <span class="number">0L</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> isNeg? -ans.intValue() : ans.intValue();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="方法二：有限自动机"><a href="#方法二：有限自动机" class="headerlink" title="方法二：有限自动机"></a>方法二：有限自动机</h1><p><img src="leetcode-%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BD%AC%E6%8D%A2%E6%95%B4%E6%95%B0/image-20210329203134311.png" alt="image-20210329203134311"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">myAtoi</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">        Automation automation = <span class="keyword">new</span> Automation();</span><br><span class="line">        <span class="keyword">int</span> len = s.length();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++)&#123;</span><br><span class="line">            automation.moveOn(s.charAt(i));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> automation.isNeg() ? -automation.getAns().intValue() : automation.getAns().intValue();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Automation</span></span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">boolean</span> neg = <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">private</span> Long ans = <span class="number">0L</span>;</span><br><span class="line">        <span class="keyword">private</span> String state = <span class="string">"q0"</span>;</span><br><span class="line">        <span class="keyword">private</span> Map&lt;String, String[]&gt; table = <span class="keyword">new</span> HashMap&lt;String, String[]&gt;()&#123;&#123;</span><br><span class="line">            put(<span class="string">"q0"</span>, <span class="keyword">new</span> String[]&#123;<span class="string">"q0"</span>, <span class="string">"q1"</span>, <span class="string">"q2"</span>, <span class="string">"q3"</span>&#125;);</span><br><span class="line">            put(<span class="string">"q1"</span>, <span class="keyword">new</span> String[]&#123;<span class="string">"q3"</span>, <span class="string">"q3"</span>, <span class="string">"q2"</span>, <span class="string">"q3"</span>&#125;);</span><br><span class="line">            put(<span class="string">"q2"</span>, <span class="keyword">new</span> String[]&#123;<span class="string">"q3"</span>, <span class="string">"q3"</span>, <span class="string">"q2"</span>, <span class="string">"q3"</span>&#125;);</span><br><span class="line">            put(<span class="string">"q3"</span>, <span class="keyword">new</span> String[]&#123;<span class="string">"q3"</span>, <span class="string">"q3"</span>, <span class="string">"q3"</span>, <span class="string">"q3"</span>&#125;);</span><br><span class="line">        &#125;&#125;;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isNeg</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> neg;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Long <span class="title">getAns</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> ans;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">moveOn</span><span class="params">(<span class="keyword">char</span> c)</span></span>&#123;</span><br><span class="line">            state = table.get(state)[getNext(c)];</span><br><span class="line">            <span class="keyword">if</span> (<span class="string">"q2"</span>.equals(state))&#123;</span><br><span class="line">                ans = ans * <span class="number">10</span> + (c - <span class="string">'0'</span>);</span><br><span class="line">                <span class="keyword">if</span> (ans &gt;= Integer.MAX_VALUE + <span class="number">1L</span> &amp;&amp; neg == <span class="keyword">true</span>)</span><br><span class="line">                    ans = Integer.MAX_VALUE + <span class="number">1L</span>;</span><br><span class="line">                <span class="keyword">if</span> (ans &gt;= Integer.MAX_VALUE &amp;&amp; neg == <span class="keyword">false</span>)</span><br><span class="line">                    ans = Integer.MAX_VALUE + <span class="number">0L</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (<span class="string">"q1"</span>.equals(state))&#123;</span><br><span class="line">                <span class="keyword">if</span> (c == <span class="string">'-'</span>)</span><br><span class="line">                    neg = <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">getNext</span><span class="params">(<span class="keyword">char</span> c)</span></span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (c == <span class="string">' '</span>)</span><br><span class="line">                <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (c == <span class="string">'+'</span> || c == <span class="string">'-'</span>)</span><br><span class="line">                <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (Character.isDigit(c))</span><br><span class="line">                <span class="keyword">return</span> <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> <span class="number">3</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
                 <time class="level-item has-text-grey" datetime="2020-09-26T02:20:27.000Z">2020-09-26</time>
                 
                 <div class="level-item">
@@ -295,7 +343,7 @@
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            5
+                            6
                         </p>
                     </a>
                 </div>
@@ -361,7 +409,7 @@
                 <span class="level-item">LeetCode</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">1</span>
+                <span class="level-item tag">2</span>
             </span>
         </a></li><li>
         <a class="level is-marginless" href="/categories/NoSQL/">
@@ -415,6 +463,25 @@
         <h3 class="menu-label">
             最新文章
         </h3>
+        
+        <article class="media">
+            
+            <a href="/2021/03/29/leetcode-%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BD%AC%E6%8D%A2%E6%95%B4%E6%95%B0/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="leetcode 字符串转换整数">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2021-03-29T12:27:41.000Z">2021-03-29</time></div>
+                    <a href="/2021/03/29/leetcode-%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BD%AC%E6%8D%A2%E6%95%B4%E6%95%B0/" class="title has-link-black-ter is-size-6 has-text-weight-normal">leetcode 字符串转换整数</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/LeetCode/">LeetCode</a>
+                    </p>
+                </div>
+            </div>
+        </article>
         
         <article class="media">
             
@@ -492,25 +559,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2019/06/28/Hello-World/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/thumbnail.svg" alt="Hello World!">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-06-27T17:30:12.000Z">2019-06-28</time></div>
-                    <a href="/2019/06/28/Hello-World/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Hello World!</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/hello-world/">hello world</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
     
@@ -521,6 +569,17 @@
             归档
         </h3>
         <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2021/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2021</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
         
         <li>
             <a class="level is-marginless" href="/archives/2020/10/">
@@ -589,7 +648,7 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/%E4%BB%A3%E7%A0%81%E8%83%BD%E5%8A%9B/">
                         <span class="tag">代码能力</span>
-                        <span class="tag is-grey">2</span>
+                        <span class="tag is-grey">3</span>
                     </a>
                 </div>
                 
