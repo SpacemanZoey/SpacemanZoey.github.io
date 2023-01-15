@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-me.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo-me.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zhouynet.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="由于工作语言是Go，所以就用Go来解答，刚好熟悉一下Go相关的知识，这里主要是碰到了Go实现大小堆，具体的思路已完成，Go大小堆知识待补充。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Leetcode:1801 积压订单中的订单总数">
+<meta property="og:url" content="https://zhouynet.com/2023/01/02/leetcode-1801/index.html">
+<meta property="og:site_name" content="小铺子">
+<meta property="og:description" content="由于工作语言是Go，所以就用Go来解答，刚好熟悉一下Go相关的知识，这里主要是碰到了Go实现大小堆，具体的思路已完成，Go大小堆知识待补充。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-01-02T15:47:26.000Z">
+<meta property="article:modified_time" content="2023-01-15T13:05:20.896Z">
+<meta property="article:author" content="竹杖芒鞋">
+<meta property="article:tag" content="补天石">
+<meta property="article:tag" content="leetcode">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://zhouynet.com/2023/01/02/leetcode-1801/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Leetcode:1801 积压订单中的订单总数 | 小铺子</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小铺子</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">时刻保持微笑</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-talking">
+
+    <a href="/talking/" rel="section"><i class="fa fa-battery-empty fa-fw"></i>不夜侯</a>
+
+  </li>
+        <li class="menu-item menu-item-studying">
+
+    <a href="/studying/" rel="section"><i class="fa fa-book fa-fw"></i>补天石</a>
+
+  </li>
+        <li class="menu-item menu-item-snapshot">
+
+    <a href="/snapshot/" rel="section"><i class="fa fa-camera fa-fw"></i>走马灯</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zhouynet.com/2023/01/02/leetcode-1801/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="竹杖芒鞋">
+      <meta itemprop="description" content="本店规模不大，客官慢慢看">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小铺子">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Leetcode:1801 积压订单中的订单总数
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-01-02 23:47:26" itemprop="dateCreated datePublished" datetime="2023-01-02T23:47:26+08:00">2023-01-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-01-15 21:05:20" itemprop="dateModified" datetime="2023-01-15T21:05:20+08:00">2023-01-15</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/01/02/leetcode-1801/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/01/02/leetcode-1801/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>由于工作语言是Go，所以就用Go来解答，刚好熟悉一下Go相关的知识，这里主要是碰到了Go实现大小堆，具体的思路已完成，Go大小堆知识待补充。</p>
+<span id="more"></span>
+
+<p>题目链接：<a target="_blank" rel="noopener" href="https://leetcode.com/problems/number-of-orders-in-the-backlog/">https://leetcode.com/problems/number-of-orders-in-the-backlog/</a></p>
+<p>You are given a 2D integer array <code>orders</code>, where each <code>orders[i] = [price&lt;sub&gt;i&lt;/sub&gt;, amount&lt;sub&gt;i&lt;/sub&gt;, orderType&lt;sub&gt;i&lt;/sub&gt;]</code> denotes that <code>amount&lt;sub&gt;i&lt;/sub&gt;</code>~ ~orders have been placed of type <code>orderType&lt;sub&gt;i&lt;/sub&gt;</code> at the price <code>price&lt;sub&gt;i&lt;/sub&gt;</code>. The <code>orderType&lt;sub&gt;i&lt;/sub&gt;</code> is:</p>
+<ul>
+<li><code>0</code> if it is a batch of <code>buy</code> orders, or</li>
+<li><code>1</code> if it is a batch of <code>sell</code> orders.</li>
+</ul>
+<p>Note that <code>orders[i]</code> represents a batch of <code>amount&lt;sub&gt;i&lt;/sub&gt;</code> independent orders with the same price and order type. All orders represented by <code>orders[i]</code> will be placed before all orders represented by <code>orders[i+1]</code> for all valid <code>i</code>.</p>
+<p>There is a <strong>backlog</strong> that consists of orders that have not been executed. The backlog is initially empty. When an order is placed, the following happens:</p>
+<ul>
+<li>If the order is a <code>buy</code> order, you look at the <code>sell</code> order with the <strong>smallest</strong> price in the backlog. If that <code>sell</code> order’s price is <strong>smaller than or equal to</strong> the current <code>buy</code> order’s price, they will match and be executed, and that <code>sell</code> order will be removed from the backlog. Else, the <code>buy</code> order is added to the backlog.</li>
+<li>Vice versa, if the order is a <code>sell</code> order, you look at the <code>buy</code> order with the <strong>largest</strong> price in the backlog. If that <code>buy</code> order’s price is <strong>larger than or equal to</strong> the current <code>sell</code> order’s price, they will match and be executed, and that <code>buy</code> order will be removed from the backlog. Else, the <code>sell</code> order is added to the backlog.</li>
+</ul>
+<p>Return  <em>the total <strong>amount</strong> of orders in the backlog after placing all the orders from the input</em> . Since this number can be large, return it <strong>modulo</strong> <code>10&lt;sup&gt;9&lt;/sup&gt; + 7</code>.</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><code>1 &lt;= orders.length &lt;= 10&lt;sup&gt;5&lt;/sup&gt;</code></li>
+<li><code>orders[i].length == 3</code></li>
+<li><code>1 &lt;= price&lt;sub&gt;i&lt;/sub&gt;, amount&lt;sub&gt;i&lt;/sub&gt; &lt;= 10&lt;sup&gt;9&lt;/sup&gt;</code></li>
+<li><code>orderType&lt;sub&gt;i&lt;/sub&gt;</code> is either <code>0</code> or <code>1</code>.</li>
+</ul>
+<h2 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h2><p>这是一个优先队列模拟的问题，存储当前的积压订单，在新的订单到来的时候根据类型，若来的是购买订单，则找出价格最低的销售订单，且当销售订单的价格&lt;&#x3D;购买订单的价格时，进行匹配并相应消除；反之购买订单&gt;&#x3D;销售订单，进行消除。</p>
+<p>要快速找到最小最大的订单价格，一个是插入时对slice进行sort排序，第二个就是使用大小堆进行判断，思路很简单，代码如下，主要是GO的大小堆实现卡住了我还蛮久的时间。。。相应博客指路 &#x3D;&gt;</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getNumberOfBacklogOrders</span><span class="params">(orders [][]<span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	sHp, bHp := &amp;sellHp&#123;&#125;, &amp;buyHp&#123;&#125;</span><br><span class="line">	heap.Init(sHp)</span><br><span class="line">	heap.Init(bHp)</span><br><span class="line">	<span class="keyword">for</span> _, o := <span class="keyword">range</span> orders &#123;</span><br><span class="line">		price, amount, orderType := o[<span class="number">0</span>], o[<span class="number">1</span>], o[<span class="number">2</span>]</span><br><span class="line">		<span class="keyword">switch</span> orderType &#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">			<span class="keyword">for</span> amount &gt; <span class="number">0</span> &amp;&amp; sHp.Len() &gt; <span class="number">0</span> &amp;&amp; (*sHp)[<span class="number">0</span>].price &lt;= price &#123;</span><br><span class="line">				<span class="keyword">if</span> (*sHp)[<span class="number">0</span>].amount &gt;= amount &#123;</span><br><span class="line">					(*sHp)[<span class="number">0</span>].amount -= amount</span><br><span class="line">					amount = <span class="number">0</span></span><br><span class="line">					<span class="keyword">break</span></span><br><span class="line">				&#125;</span><br><span class="line">				amount -= heap.Pop(sHp).(order).amount</span><br><span class="line">			&#125;</span><br><span class="line">			heap.Push(bHp, order&#123;price, amount&#125;)</span><br><span class="line">		<span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">			<span class="keyword">for</span> amount &gt; <span class="number">0</span> &amp;&amp; bHp.Len() &gt; <span class="number">0</span> &amp;&amp; (*bHp)[<span class="number">0</span>].price &gt;= price &#123;</span><br><span class="line">				<span class="keyword">if</span> (*bHp)[<span class="number">0</span>].amount &gt;= amount &#123;</span><br><span class="line">					(*bHp)[<span class="number">0</span>].amount -= amount</span><br><span class="line">					amount = <span class="number">0</span></span><br><span class="line">					<span class="keyword">break</span></span><br><span class="line">				&#125;</span><br><span class="line">				amount -= heap.Pop(bHp).(order).amount</span><br><span class="line">			&#125;</span><br><span class="line">			heap.Push(sHp, order&#123;price, amount&#125;)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	res := <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> _, order := <span class="keyword">range</span> *sHp &#123;</span><br><span class="line">		res += order.amount</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> _, order := <span class="keyword">range</span> *bHp &#123;</span><br><span class="line">		res += order.amount</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> res % (<span class="number">1e9</span> + <span class="number">7</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> order <span class="keyword">struct</span>&#123;</span><br><span class="line">	price <span class="type">int</span></span><br><span class="line">	amount <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> sellHp []order</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s sellHp)</span></span> Len() <span class="type">int</span>&#123; <span class="keyword">return</span> <span class="built_in">len</span>(s) &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s sellHp)</span></span> Swap(i, j <span class="type">int</span>) &#123; s[i], s[j] = s[j], s[i] &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s sellHp)</span></span> Less(i, j <span class="type">int</span>) <span class="type">bool</span> &#123; <span class="keyword">return</span> s[i].price &lt; s[j].price &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *sellHp)</span></span> Push(x <span class="keyword">interface</span>&#123;&#125;) &#123; </span><br><span class="line">	*s = <span class="built_in">append</span>(*s, x.(order))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *sellHp)</span></span> Pop() <span class="keyword">interface</span>&#123;&#125; &#123;</span><br><span class="line">	old := *s</span><br><span class="line">    n := <span class="built_in">len</span>(old)</span><br><span class="line">    x := old[n<span class="number">-1</span>]</span><br><span class="line">    *s = old[<span class="number">0</span> : n<span class="number">-1</span>]</span><br><span class="line">	<span class="keyword">return</span> x</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b buyHp)</span></span> Len() <span class="type">int</span> &#123; <span class="keyword">return</span> <span class="built_in">len</span>(b) &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b buyHp)</span></span> Swap(i, j <span class="type">int</span>) &#123; b[i], b[j] = b[j], b[i] &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b buyHp)</span></span> Less(i, j <span class="type">int</span>) <span class="type">bool</span> &#123; <span class="keyword">return</span> b[i].price &gt; b[j].price &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *buyHp)</span></span> Push(x <span class="keyword">interface</span>&#123;&#125;) &#123;</span><br><span class="line">	*b = <span class="built_in">append</span>(*b, x.(order))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> buyHp []order</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *buyHp)</span></span> Pop() <span class="keyword">interface</span>&#123;&#125; &#123;</span><br><span class="line">	old := *b</span><br><span class="line">    n := <span class="built_in">len</span>(old)</span><br><span class="line">    x := old[n<span class="number">-1</span>]</span><br><span class="line">    *b = old[<span class="number">0</span> : n<span class="number">-1</span>]</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2023\01\15\leetcode-2293\" rel="bookmark">Leetcode-2293 Min Max Game</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\12\11\Linux程序设计-Chapter-1\" rel="bookmark">Linux程序设计——读书笔记 Chapter 1</a></div>
+    </li>
+  </ul>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%A1%A5%E5%A4%A9%E7%9F%B3/" rel="tag"><i class="fa fa-tag"></i> 补天石</a>
+              <a href="/tags/leetcode/" rel="tag"><i class="fa fa-tag"></i> leetcode</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/01/02/%E7%A7%AF%E5%88%86%E6%B8%B8%E6%88%8F/" rel="prev" title="积分游戏">
+      <i class="fa fa-chevron-left"></i> 积分游戏
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/01/15/2023-01-15-%E5%88%9D%E9%9B%AA/" rel="next" title="瑞雪兆丰年">
+      瑞雪兆丰年 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF"><span class="nav-number">1.</span> <span class="nav-text">解题思路</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="竹杖芒鞋"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">竹杖芒鞋</p>
+  <div class="site-description" itemprop="description">本店规模不大，客官慢慢看</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
+    Chat
+  </a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">竹杖芒鞋</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'emg5VreatXIcwmAW8qT83eeL-gzGzoHsz',
+      appKey     : 'FkxLafkXH3pg05Lrd8grW6LE',
+      placeholder: "不知客官有何吩咐",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
