@@ -294,7 +294,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-07 00:02:28" itemprop="dateModified" datetime="2024-04-07T00:02:28+08:00">2024-04-07</time>
+                <time title="修改时间：2024-04-07 00:06:50" itemprop="dateModified" datetime="2024-04-07T00:06:50+08:00">2024-04-07</time>
               </span>
 
           
@@ -324,93 +324,106 @@
       
           <p>最近工作中，可能有需要用到ZooKeeper，所以来恶补一下，阅读书籍为ZooKeeper - 分布式过程协同技术详解。</p>
 <h1 id="第一部分-ZooKeeper的概念和基础"><a href="#第一部分-ZooKeeper的概念和基础" class="headerlink" title="第一部分 ZooKeeper的概念和基础"></a>第一部分 ZooKeeper的概念和基础</h1><h2 id="ZooKeeper作用"><a href="#ZooKeeper作用" class="headerlink" title="ZooKeeper作用"></a>ZooKeeper作用</h2><p>ZooKeeper 从文件系统API得到启发，提供了一组简单的API，使得开发人员可以实现通用的写作任务，包括选举主节点、管理组内成员关系、管理元数据等等，其服务组件运行在一组专用的服务器之上，保证了高容错性和可扩展性，在设计时需要将应用数据（真正处理的内容）和协同数据（元数据，分布式任务的协作数据）独立开，ZooKeeper是用于管理协同数据的服务。</p>
-<p><strong>ZooKeeper主线：</strong>在分布式系统中写作多个任务，一个协作任务是指一个包含多个进程的任务，这个任务可以是为了协作或者管理竞争。</p>
-<p><strong>工作模式：</strong></p>
-<ul>
-<li>【协作】：以主-从（master-worker）工作模式为例，从节点处于空闲状态时通知主节点可以接受工作，于是主节点就会分配任务给从节点；</li>
-<li>【竞争】：以主-从（master-worker）工作模式中竞争主节点为例，需要实现互斥排他锁(mutual exclusion)，获取主节点的身份过程时获取锁的过程，获得主节点控制权锁的进程为主节点进程。</li>
-</ul>
-<p><strong>多个进程在同一台计算机上运行 VS 多个进程的跨计算机运行</strong></p>
-<ul>
-<li>相同：同步原语相同</li>
-<li>不同：典型的不共享环境下，不同计算机之间不共享除了网络之外的其他任何信息；</li>
-</ul>
-<p><strong>使用实例</strong></p>
-<ul>
-<li>Apache HBase：用于选举一个集群内的主节点，以便跟踪可用的服务器，并保存集群的元数据；</li>
-<li>Apache Kafka：用于检测崩溃，实现主题的发现，并保持主题的生产和消费状态；</li>
-<li>Apache Solr：储存集群的元数据，并协作更新元数据；</li>
-<li>Yahoo！Fetching Service：实现主节点的选举、崩溃检测和元数据存储；</li>
-<li>Facebook Messages：作为控制器，用来实现数据分片、故障恢复和服务发现等功能；</li>
-</ul>
-<p><strong>ZooKeeper客户端</strong></p>
-<ul>
-<li>保障强一致性、有序性和持久性；</li>
-<li>实现通用的同步原语的能力；</li>
-<li>提供简单的并发处理机制；</li>
-</ul>
-<p><strong>ZooKeeper不适用的场景</strong></p>
-<ul>
-<li>海量数据存储；</li>
-</ul>
-<p><strong>独立的协调组件的优势</strong></p>
-<ul>
-<li>独立地设计和实现该组件，可以跨多个应用共享；</li>
-<li>简化协作方面的工作；</li>
-<li>系统可以独立地运行和协作组件，简化生产环境中解决实际问题的任务；</li>
-</ul>
-<p><strong>分布式系统通信</strong></p>
-<ul>
-<li>通过网络进行信息交换；</li>
-<li>读写共享存储（ZooKeeper）；</li>
-</ul>
-<p><strong>真实系统中的问题</strong></p>
-<ul>
-<li><strong>消息延迟</strong>：消息传输可能发生任意延迟，如，发生网络拥堵，导致消息顺序混乱；</li>
-<li><strong>处理器性能</strong>：操作系统的调度和超载也可能导致消息处理的任意延迟，消息延迟时间&#x3D;发送端消耗的时间+传输时间+接收端的处理时间；</li>
-<li><strong>时钟偏移</strong>：处理器始终会发生任意的偏移，依赖处理器始终会导致错误的决策；</li>
-</ul>
-<h1 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h1><h2 id="主-从应用"><a href="#主-从应用" class="headerlink" title="主-从应用"></a>主-从应用</h2><p>主节点进程负责跟踪从节点状态和任务的有效性，并分配任务到从节点，对ZooKeeper来说，这个架构风格具有代表性，如选举主节点，跟踪有效的从节点，维护应用元数据；</p>
-<p><img src="/2024/04/06/ZooKeeper-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0-1/%E4%B8%BB%E4%BB%8E%E5%BA%94%E7%94%A8%E6%9E%B6%E6%9E%84.jpg" alt="主从应用架构"></p>
-<p><strong>关键问题</strong></p>
-<ul>
-<li><strong>主节点崩溃</strong>：如果主节点发送错误并失效，系统将无法分配新的任务或重新分配已失败的任务；</li>
-<li><strong>从节点崩溃</strong>：已分配的任务将无法完成；</li>
-<li><strong>通信故障</strong>：如果主从节点之间无法进行信息交换，从节点将无法得知新的任务分配；</li>
-</ul>
-<p><strong>主节点失效</strong></p>
-<p>主节点崩溃时需要备份节点接管角色，并进行故障转移，需要解决的问题有：状态恢复、脑裂（split-brain，系统中两个或者多个部分开始独立工作，导致整体行为的不一致性）</p>
-<p><strong>从节点失效</strong></p>
-<p>客户端向主节点提交任务，之后主节点将任务派发到有效的从节点中，从节点接收到派发的任务，执行完成狗向主节点报告执行状态，主节点下一步将执行结果通知给客户端。</p>
-<ul>
-<li>主机点需要有检测从节点的崩溃的能力，需要确认从节点是否有效以便派发崩溃节点的任务；</li>
-<li>崩溃时，从节点也许执行了部分任务，也许执行完成，但没有报告结果，如果运算过程产生了其他作用，有必要执行某些恢复过程来清楚之前的状态；</li>
-</ul>
-<p><strong>通信故障</strong></p>
-<ul>
-<li><strong>任务多次执行</strong>：主从节点之间的网络断开，可能会导致任务被执行多次，场景：主节点M1发任务T1给从节点W1，W1获取任务锁，执行任务，然后释放锁，M1怀疑W1已经崩溃，再次派发任务T1给W2，W2获取任务锁，执行任务，然后释放锁。在这种场景下，任务会执行两次，因为W1和W2执行任务时没有步骤交错，这种情况需要依赖“仅一次”和“最多一次”的语义学，这又依赖于应用的特定处理机制，如局部变更回退能力等；</li>
-<li>影响锁等同步原语：锁机制会阻止任务的继续执行，相应机制：<ul>
-<li>设置某些数据状态为临时状态；</li>
-<li>定时发送存货通知，若未能及时发送通知，所有从属于这个客户端的临时状态的数据将全部被删除</li>
-</ul>
-</li>
-</ul>
-<p><strong>主-从结构需求</strong></p>
-<ul>
-<li>主节点选举：使得主节点可以给从节点分配任务；</li>
-<li>崩溃检测：主节点必须具有检测从节点崩溃或失去连接的能力；</li>
-<li>组成员关系管理：知道哪一个从节点可以执行任务；</li>
-<li>元数据管理：主从节点必须通过某种可靠的方式来保存分配状态和执行状态的能力；</li>
-</ul>
-<h1 id="分布式协作的难点"><a href="#分布式协作的难点" class="headerlink" title="分布式协作的难点"></a>分布式协作的难点</h1><p>理想情况下，基于异步通信的假设来设计系统，即使用的主机有可能发生时间偏移或通信故障。</p>
-<p><strong>CAP定律</strong></p>
-<ul>
-<li>一致性（consistency）</li>
-<li>可用性（availability）</li>
-<li>分区容错性（Partition-tolerance）</li>
-</ul>
-<p>ZooKeeper尽可能满足一致性和可用性，在发生网络分区时，ZooKeeper提供了只读能力。</p>
+<!-- more --
 
+**ZooKeeper主线：**在分布式系统中写作多个任务，一个协作任务是指一个包含多个进程的任务，这个任务可以是为了协作或者管理竞争。
+
+**工作模式：**
+
++ 【协作】：以主-从（master-worker）工作模式为例，从节点处于空闲状态时通知主节点可以接受工作，于是主节点就会分配任务给从节点；
++ 【竞争】：以主-从（master-worker）工作模式中竞争主节点为例，需要实现互斥排他锁(mutual exclusion)，获取主节点的身份过程时获取锁的过程，获得主节点控制权锁的进程为主节点进程。
+
+**多个进程在同一台计算机上运行 VS 多个进程的跨计算机运行**
+
++ 相同：同步原语相同
++ 不同：典型的不共享环境下，不同计算机之间不共享除了网络之外的其他任何信息；
+
+**使用实例**
+
++ Apache HBase：用于选举一个集群内的主节点，以便跟踪可用的服务器，并保存集群的元数据；
++ Apache Kafka：用于检测崩溃，实现主题的发现，并保持主题的生产和消费状态；
++ Apache Solr：储存集群的元数据，并协作更新元数据；
++ Yahoo！Fetching Service：实现主节点的选举、崩溃检测和元数据存储；
++ Facebook Messages：作为控制器，用来实现数据分片、故障恢复和服务发现等功能；
+
+**ZooKeeper客户端**
+
++ 保障强一致性、有序性和持久性；
++ 实现通用的同步原语的能力；
++ 提供简单的并发处理机制；
+
+**ZooKeeper不适用的场景**
+
++ 海量数据存储；
+
+**独立的协调组件的优势**
+
++ 独立地设计和实现该组件，可以跨多个应用共享；
++ 简化协作方面的工作；
++ 系统可以独立地运行和协作组件，简化生产环境中解决实际问题的任务；
+
+**分布式系统通信**
+
++ 通过网络进行信息交换；
++ 读写共享存储（ZooKeeper）；
+
+**真实系统中的问题**
+
++ **消息延迟**：消息传输可能发生任意延迟，如，发生网络拥堵，导致消息顺序混乱；
++ **处理器性能**：操作系统的调度和超载也可能导致消息处理的任意延迟，消息延迟时间=发送端消耗的时间+传输时间+接收端的处理时间；
++ **时钟偏移**：处理器始终会发生任意的偏移，依赖处理器始终会导致错误的决策；
+
+# 示例
+
+## 主-从应用
+
+主节点进程负责跟踪从节点状态和任务的有效性，并分配任务到从节点，对ZooKeeper来说，这个架构风格具有代表性，如选举主节点，跟踪有效的从节点，维护应用元数据；
+
+![主从应用架构](主从应用架构.jpg)
+
+**关键问题**
+
++ **主节点崩溃**：如果主节点发送错误并失效，系统将无法分配新的任务或重新分配已失败的任务；
++ **从节点崩溃**：已分配的任务将无法完成；
++ **通信故障**：如果主从节点之间无法进行信息交换，从节点将无法得知新的任务分配；
+
+**主节点失效**
+
+主节点崩溃时需要备份节点接管角色，并进行故障转移，需要解决的问题有：状态恢复、脑裂（split-brain，系统中两个或者多个部分开始独立工作，导致整体行为的不一致性）
+
+**从节点失效**
+
+客户端向主节点提交任务，之后主节点将任务派发到有效的从节点中，从节点接收到派发的任务，执行完成狗向主节点报告执行状态，主节点下一步将执行结果通知给客户端。
+
++ 主机点需要有检测从节点的崩溃的能力，需要确认从节点是否有效以便派发崩溃节点的任务；
++ 崩溃时，从节点也许执行了部分任务，也许执行完成，但没有报告结果，如果运算过程产生了其他作用，有必要执行某些恢复过程来清楚之前的状态；
+
+**通信故障**
+
++ **任务多次执行**：主从节点之间的网络断开，可能会导致任务被执行多次，场景：主节点M1发任务T1给从节点W1，W1获取任务锁，执行任务，然后释放锁，M1怀疑W1已经崩溃，再次派发任务T1给W2，W2获取任务锁，执行任务，然后释放锁。在这种场景下，任务会执行两次，因为W1和W2执行任务时没有步骤交错，这种情况需要依赖“仅一次”和“最多一次”的语义学，这又依赖于应用的特定处理机制，如局部变更回退能力等；
++ 影响锁等同步原语：锁机制会阻止任务的继续执行，相应机制：
+  + 设置某些数据状态为临时状态；
+  + 定时发送存货通知，若未能及时发送通知，所有从属于这个客户端的临时状态的数据将全部被删除
+
+**主-从结构需求**
+
++ 主节点选举：使得主节点可以给从节点分配任务；
++ 崩溃检测：主节点必须具有检测从节点崩溃或失去连接的能力；
++ 组成员关系管理：知道哪一个从节点可以执行任务；
++ 元数据管理：主从节点必须通过某种可靠的方式来保存分配状态和执行状态的能力；
+
+# 分布式协作的难点
+
+理想情况下，基于异步通信的假设来设计系统，即使用的主机有可能发生时间偏移或通信故障。
+
+**CAP定律**
+
++ 一致性（consistency）
++ 可用性（availability）
++ 分区容错性（Partition-tolerance）
+
+ZooKeeper尽可能满足一致性和可用性，在发生网络分区时，ZooKeeper提供了只读能力。
+-->
       
     </div>
 
@@ -462,7 +475,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-07 00:03:51" itemprop="dateModified" datetime="2024-04-07T00:03:51+08:00">2024-04-07</time>
+                <time title="修改时间：2024-04-07 00:06:52" itemprop="dateModified" datetime="2024-04-07T00:06:52+08:00">2024-04-07</time>
               </span>
 
           
@@ -502,17 +515,14 @@
 <li><p>2：程序的标准错误输出，重定向错误输出</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">archer@Arhcer:/mnt/d/coding/linux-studying/ChapterTwo$ ls -l 2&gt; lsoutput.txt</span><br><span class="line">total 0</span><br><span class="line">-rwxrwxrwx 1 archer archer 0 May  4 16:56 lsoutput.txt</span><br></pre></td></tr></table></figure></li>
 </ul>
-<!-- more -
-
-默认情况下，重定向输出到文件，会直接覆盖该文件的内容，如果要改变默认行为，使用 `set -o noclobber`，可以阻止覆盖写入
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">archer@Arhcer:/mnt/d/coding/linux-studying/ChapterTwo$ set -o noclobber</span><br><span class="line">archer@Arhcer:/mnt/d/coding/linux-studying/ChapterTwo$ ls -l &gt; lsoutput.txt</span><br><span class="line">-bash: lsoutput.txt: cannot overwrite existing file </span><br></pre></td></tr></table></figure>
-
-<p>取消该选项，使用 <code>set +o noclobber</code></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">archer@Arhcer:/mnt/d/coding/linux-studying/ChapterTwo$ set +o noclobber</span><br><span class="line">archer@Arhcer:/mnt/d/coding/linux-studying/ChapterTwo$ ls -l &gt; lsoutput.txt</span><br></pre></td></tr></table></figure>
-
-<h3 id="重定向附加到文件"><a href="#重定向附加到文件" class="headerlink" title="重定向附加到文件"></a>重定向附加到文件</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps &gt;&gt; lsoutput.txt</span><br></pre></td></tr></table></figure>
--->
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/05/04/Linux%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1-Chapter-2/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
