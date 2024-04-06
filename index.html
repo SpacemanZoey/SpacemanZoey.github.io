@@ -454,10 +454,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2023-05-04 16:41:52 / 修改时间：21:41:08" itemprop="dateCreated datePublished" datetime="2023-05-04T16:41:52+08:00">2023-05-04</time>
+              <time title="创建时间：2023-05-04 16:41:52" itemprop="dateCreated datePublished" datetime="2023-05-04T16:41:52+08:00">2023-05-04</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-04-07 00:03:51" itemprop="dateModified" datetime="2024-04-07T00:03:51+08:00">2024-04-07</time>
+              </span>
 
           
   
@@ -496,14 +502,17 @@
 <li><p>2：程序的标准错误输出，重定向错误输出</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">archer@Arhcer:/mnt/d/coding/linux-studying/ChapterTwo$ ls -l 2&gt; lsoutput.txt</span><br><span class="line">total 0</span><br><span class="line">-rwxrwxrwx 1 archer archer 0 May  4 16:56 lsoutput.txt</span><br></pre></td></tr></table></figure></li>
 </ul>
-<p>默认情况下，重定向输出到文件，会直接覆盖该文件的内容，如果要改变默认行为，使用 <code>set -o noclobber</code>，可以阻止覆盖写入</p>
+<!-- more -
+
+默认情况下，重定向输出到文件，会直接覆盖该文件的内容，如果要改变默认行为，使用 `set -o noclobber`，可以阻止覆盖写入
+
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">archer@Arhcer:/mnt/d/coding/linux-studying/ChapterTwo$ set -o noclobber</span><br><span class="line">archer@Arhcer:/mnt/d/coding/linux-studying/ChapterTwo$ ls -l &gt; lsoutput.txt</span><br><span class="line">-bash: lsoutput.txt: cannot overwrite existing file </span><br></pre></td></tr></table></figure>
 
 <p>取消该选项，使用 <code>set +o noclobber</code></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">archer@Arhcer:/mnt/d/coding/linux-studying/ChapterTwo$ set +o noclobber</span><br><span class="line">archer@Arhcer:/mnt/d/coding/linux-studying/ChapterTwo$ ls -l &gt; lsoutput.txt</span><br></pre></td></tr></table></figure>
 
 <h3 id="重定向附加到文件"><a href="#重定向附加到文件" class="headerlink" title="重定向附加到文件"></a>重定向附加到文件</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps &gt;&gt; lsoutput.txt</span><br></pre></td></tr></table></figure>
-
+-->
       
     </div>
 
